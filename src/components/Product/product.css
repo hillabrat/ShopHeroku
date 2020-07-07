@@ -1,0 +1,12 @@
+.product {
+  height: 250px;
+  width: 240px;
+  background-color: lightgreen;
+  margin: 10px;
+  position: relative;
+  float: left;
+}
+
+img {
+  height: 100px;
+}
