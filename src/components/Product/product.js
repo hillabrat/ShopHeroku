@@ -7,17 +7,23 @@ class Product extends Component {
     productImg: this.props.image,
     productTitle: this.props.title,
     productQuantity: this.props.quantity,
+    updateCart: this.props.updateCart,
   };
   render() {
     return (
       <div className="product">
         <h2>{this.state.productTitle}</h2>
         <img src={this.state.productImg}></img>
-        <div ClassName="quantity">quantity: {this.state.productQuantity}</div>
+        <div className="quantity">quantity: {this.state.productQuantity}</div>
         <button
-          onClick={() =>
-            this.setState({ productQuantity: this.state.productQuantity - 1 })
-          }
+          onClick={() => {
+            if (this.state.productQuantity > 0) {
+              this.setState({
+                productQuantity: this.state.productQuantity - 1,
+              });
+              this.state.updateCart();
+            } else alert("product is out of stock");
+          }}
         >
           Add to Cart
         </button>

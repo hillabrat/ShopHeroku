@@ -3,7 +3,11 @@ import ReactDOM from "react-dom";
 import "./header.css";
 
 function Header() {
-  return <h1>Products</h1>;
+  return (
+    <div className="Header">
+      <h1>Products</h1>
+    </div>
+  );
 }
 
 export default Header;
