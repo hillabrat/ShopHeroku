@@ -13,28 +13,30 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [totalProductsInCart, setTotalProductsInCart] = useState(0);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([]);
+  const [priceRangeSelected, setPriceRangeSelected] = useState([]);
 
   const handleRangeChange = ([minVal, maxVal]) => {
-    console.log(minVal, maxVal);
-    console.log(products.filter((p) => p.price >= minVal && p.price <= maxVal));
-    setPriceRange([minVal, maxVal]);
+    //console.log(minVal, maxVal);
+    //console.log(products.filter((p) => p.price >= minVal && p.price <= maxVal));
+    setPriceRangeSelected([minVal, maxVal]);
   };
 
   useEffect(() => {
     axios.get("https://quilt-flax-chemistry.glitch.me/products").then((res) => {
-      //console.log(res.data);
       setProducts(res.data);
+
+      let min = res.data.reduce(function (prev, current) {
+        return prev.price < current.price ? prev : current;
+      }).price;
+
+      let max = res.data.reduce(function (prev, current) {
+        return prev.price > current.price ? prev : current;
+      }).price;
+      setPriceRange([min, max]);
+      setPriceRangeSelected([min, max]);
     });
   }, []);
-
-  // useEffect(() => {
-  //   // run here if count changes
-  // }, [priceRange]);
-
-  // useEffect(() => {
-  //   console.log("item added to your cart");
-  // });
 
   return (
     <div className="App">
@@ -69,17 +71,27 @@ const App = () => {
       </div>
       <div className="Products">
         <h2>Products</h2>
-        <Slider
-          range
-          defaultValue={[0, 100]}
-          onChange={handleRangeChange}
-          tooltipVisible
-        >
-          price filter
-        </Slider>
+        {priceRange[0] ? (
+          <Slider
+            range
+            min={priceRange[0]}
+            max={priceRange[1]}
+            defaultValue={priceRange}
+            //value={[20, 50]}
+            // value={[min, max]}
+            step={5}
+            onChange={handleRangeChange}
+            tooltipVisible
+          >
+            price filter
+          </Slider>
+        ) : null}
         {products
           .filter(function (pr) {
-            return pr.price >= priceRange[0] && pr.price <= priceRange[1];
+            return (
+              pr.price >= priceRangeSelected[0] &&
+              pr.price <= priceRangeSelected[1]
+            );
           })
           .map((p, index) => (
             <Product
