@@ -71,6 +71,7 @@ const App = () => {
       </div>
       <div className="Products">
         <h2>Products</h2>
+        price filter
         {priceRange[0] ? (
           <Slider
             range
@@ -82,9 +83,7 @@ const App = () => {
             step={5}
             onChange={handleRangeChange}
             tooltipVisible
-          >
-            price filter
-          </Slider>
+          ></Slider>
         ) : null}
         {products
           .filter(function (pr) {
