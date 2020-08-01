@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./product.css";
 
 const Product = (props) => {
@@ -6,15 +7,13 @@ const Product = (props) => {
   const [productCartQuantity, setProductCartQuantity] = useState(
     props.cartQuantity
   );
-  //console.log(props);
-  const productKey = props.id;
   return (
     <div className="product">
-      <h3>
-        {props.title} - {props.id}
-      </h3>
-      <img src={props.image}></img>
-      <div>price = {props.price}</div>
+      <Link to={"/products/" + props.id}>
+        <img src={props.image} alt="loading..."></img>
+      </Link>
+      <h3>{props.title}</h3>
+      <div>price {props.price} ils</div>
       {props.isCartProduct ? (
         <div>
           <div className="quantity">quantity: {props.cartQuantity}</div>
@@ -46,6 +45,7 @@ const Product = (props) => {
           <button
             title="Remove from Cart"
             onClick={() => {
+              console.log("productCartQuantity=", productCartQuantity);
               if (productCartQuantity > 0)
                 setProductQuantity(productQuantity + 1);
 
