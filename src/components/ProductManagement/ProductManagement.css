@@ -1,0 +1,29 @@
+.productsMgmt {
+  height: 100%;
+  width: 100%;
+}
+
+.productsList {
+  width: 40%;
+  height: 100%;
+  float: left;
+}
+
+.productsList ul {
+  height: 100%;
+}
+
+.productTile img {
+  width: 100%;
+  cursor: pointer;
+}
+.productData {
+  width: 45%;
+  height: 100%;
+  float: left;
+}
+
+.editImg {
+  height: 35px;
+  width: 35px;
+}

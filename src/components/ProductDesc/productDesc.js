@@ -7,12 +7,10 @@ const ProductDesc = (props) => {
   const [productData, setProductData] = useState([]);
   const { idParam } = useParams();
   useEffect(() => {
-    axios
-      .get("https://quilt-flax-chemistry.glitch.me/products/" + idParam)
-      .then((res) => {
-        setProductData(res.data);
-      });
-  }, []);
+    axios.get(`http://localhost:8000/products/${idParam}`).then((res) => {
+      setProductData(res.data);
+    });
+  }, [idParam]);
   return (
     <div className="productData">
       <Link to={"/"}>Home</Link>

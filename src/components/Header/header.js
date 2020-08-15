@@ -1,6 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import "./header.css";
 
 const Header = () => (
   <div className="Header">
