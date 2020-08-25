@@ -8,8 +8,10 @@ import ProductDesc from "./components/ProductDesc/productDesc";
 import ProductManagement from "./components/ProductManagement/ProductManagement";
 import Login from "./components/Login/Login";
 import axios from "axios";
+import SearchProduct from "./components/SearchProduct/SearchProduct";
 
 const App = () => {
+  const [searchStr, setSearchStr] = useState("");
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({
     products: [],
@@ -18,6 +20,7 @@ const App = () => {
   });
 
   const handleAddOneProduct = (pId) => {
+    let shouldAddProduct = true;
     const prodInd = products.findIndex((p) => p.id === pId);
     let updatedProducts = JSON.parse(JSON.stringify(products));
     if (updatedProducts[prodInd].quantity > 0) {
@@ -26,11 +29,14 @@ const App = () => {
       setProducts(updatedProducts);
     } else {
       alert("product is out of stock");
+      shouldAddProduct = false;
     }
+
+    if (!shouldAddProduct) return;
 
     const cartInd = cart.products.findIndex((p) => p.id === pId);
     if (cartInd === -1) {
-      let productToAdd = products[prodInd];
+      let productToAdd = JSON.parse(JSON.stringify(products[prodInd]));
       productToAdd.quantity = 1;
 
       setCart({
@@ -39,7 +45,7 @@ const App = () => {
         totalProductsAmount: cart.totalProductsAmount + productToAdd.price,
       });
     } else {
-      let updatedCartProducts = JSON.parse(JSON.stringify(cart.products));
+      let updatedCartProducts = cart.products;
       updatedCartProducts[cartInd].quantity += 1;
       setCart({
         products: [...updatedCartProducts],
@@ -52,7 +58,7 @@ const App = () => {
 
   const handleRemoveOneProduct = (pId) => {
     const cartInd = cart.products.findIndex((p) => p.id === pId);
-    let updatedCartProducts = JSON.parse(JSON.stringify(cart.products));
+    let updatedCartProducts = cart.products;
     if (cartInd !== -1) {
       updatedCartProducts[cartInd].quantity -= 1;
 
@@ -103,21 +109,27 @@ const App = () => {
     });
 
     const prodInd = products.findIndex((p) => p.id === pId);
-    let updatedProducts = JSON.parse(JSON.stringify(products));
+    let updatedProducts = products;
 
     updatedProducts[prodInd].quantity += countToDecrease;
     updatedProducts[prodInd].cartQuantity = 0;
     setProducts([...updatedProducts]);
   };
 
+  const searchForProduct = (searchStr) => {
+    setSearchStr(searchStr);
+  };
+
   useEffect(() => {
-    axios.get("http://localhost:8000/products").then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        res.data[i].cartQuantity = 0;
-      }
-      setProducts(res.data);
-    });
-  }, []);
+    axios
+      .get(`http://localhost:8000/products?search=${searchStr}`)
+      .then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].cartQuantity = 0;
+        }
+        setProducts(res.data);
+      });
+  }, [searchStr]);
 
   return (
     <Router>
@@ -130,13 +142,19 @@ const App = () => {
               cart={cart}
               removeProductFromCart={handleRemoveProductFromCart}
             />
-            {products.length && (
-              <Products
-                products={products}
-                addProductToCart={handleAddOneProduct}
-                removeProductFromCart={handleRemoveOneProduct}
-              />
-            )}
+            <div className="Products">
+              <h2>
+                Products <SearchProduct searchForProduct={searchForProduct} />
+              </h2>
+              {products.length && (
+                <Products
+                  products={products}
+                  addProductToCart={handleAddOneProduct}
+                  removeProductFromCart={handleRemoveOneProduct}
+                  searchForProduct={searchForProduct}
+                />
+              )}
+            </div>
           </Route>
           <Route exact path="/ProductMgmt">
             <Header />

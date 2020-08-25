@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Product from "../Product/product";
 import "../Products/products.css";
 import { Slider } from "antd";
+import SearchProduct from "../SearchProduct/SearchProduct";
 
 const Products = (props) => {
   const [products, setProducts] = useState([]);
@@ -20,6 +21,10 @@ const Products = (props) => {
     props.removeProductFromCart(pId);
   };
 
+  const searchForProduct = (searchStr) => {
+    props.searchForProduct(searchStr);
+  };
+
   useEffect(() => {
     setProducts(props.products);
     let min = Math.min(...props.products.map((o) => o.price));
@@ -34,42 +39,44 @@ const Products = (props) => {
 
   return (
     <div className="ShopContainer">
-      <div className="Products">
-        <h2>Products</h2>
-        price filter
-        {priceRange[0] ? (
-          <Slider
-            range
-            min={priceRange[0]}
-            max={priceRange[1]}
-            defaultValue={priceRange}
-            step={1}
-            onChange={handleRangeChange}
-            tooltipVisible
-          ></Slider>
-        ) : null}
-        {products
-          .filter(function (pr) {
-            return (
-              pr.price >= priceRangeSelected[0] &&
-              pr.price <= priceRangeSelected[1]
-            );
-          })
-          .map((p, index) => (
-            <Product
-              key={p.id}
-              id={p.id}
-              title={p.title}
-              image={p.image}
-              cartQuantity={p.cartQuantity} // ? p.cartQuantity : 0}
-              quantity={p.quantity}
-              price={p.price}
-              isCartProduct={false}
-              onAdd={handleOnAddProduct}
-              onRemove={handleOnRemoveProduct}
-            />
-          ))}
-      </div>
+      {/* <div className="Products"> */}
+      {/* <h2>
+        Products <SearchProduct searchForProduct={searchForProduct} />
+      </h2> */}
+      price filter
+      {priceRange[0] ? (
+        <Slider
+          range
+          min={priceRange[0]}
+          max={priceRange[1]}
+          defaultValue={priceRange}
+          step={1}
+          onChange={handleRangeChange}
+          tooltipVisible
+        ></Slider>
+      ) : null}
+      {products
+        .filter(function (pr) {
+          return (
+            pr.price >= priceRangeSelected[0] &&
+            pr.price <= priceRangeSelected[1]
+          );
+        })
+        .map((p, index) => (
+          <Product
+            key={p.id}
+            id={p.id}
+            title={p.title}
+            image={p.image}
+            cartQuantity={p.cartQuantity} // ? p.cartQuantity : 0}
+            quantity={p.quantity}
+            price={p.price}
+            isCartProduct={false}
+            onAdd={handleOnAddProduct}
+            onRemove={handleOnRemoveProduct}
+          />
+        ))}
+      {/* </div> */}
     </div>
   );
 };
