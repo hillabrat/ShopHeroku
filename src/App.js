@@ -9,15 +9,23 @@ import ProductManagement from "./components/ProductManagement/ProductManagement"
 import Login from "./components/Login/Login";
 import axios from "axios";
 import SearchProduct from "./components/SearchProduct/SearchProduct";
+import createPersistedState from "use-persisted-state";
+import LoginForm from "./components/LoginForm/LoginForm";
+import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
 
 const App = () => {
+  const useCartState = createPersistedState("cart");
+
   const [searchStr, setSearchStr] = useState("");
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState({
+  const [cart, setCart] = useCartState({
     products: [],
     totalProductsCount: 0,
     totalProductsAmount: 0,
   });
+
+  const [title, updateTitle] = useState("Hilla's Shop");
+  const [errorMessage, updateErrorMessage] = useState(null);
 
   const handleAddOneProduct = (pId) => {
     let shouldAddProduct = true;
@@ -134,10 +142,10 @@ const App = () => {
   return (
     <Router>
       <div className="App">
+        <Header title={title} />
+        <Login />
         <Switch>
           <Route exact path="/">
-            <Header />
-            <Login />
             <Cart
               cart={cart}
               removeProductFromCart={handleRemoveProductFromCart}
@@ -162,6 +170,18 @@ const App = () => {
           </Route>
           <Route path="/products/:idParam">
             <ProductDesc />
+          </Route>
+          <Route path="/register">
+            <RegistrationForm
+              showError={updateErrorMessage}
+              updateTitle={updateTitle}
+            />
+          </Route>
+          <Route path="/login">
+            <LoginForm
+              showError={updateErrorMessage}
+              updateTitle={updateTitle}
+            />
           </Route>
         </Switch>
       </div>

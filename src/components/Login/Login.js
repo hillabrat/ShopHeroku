@@ -2,9 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Login = () => (
-  <div className="Login">
+  <div className="login">
     <h3>
-      Own this site? <Link to="/ProductMgmt">Login</Link>
+      {/* <Link to="/LoginForm">Login</Link>/
+      <Link to="/RegistrationForm">Register </Link> */}
+      <Link to="/ProductMgmt">Manage Products</Link>
     </h3>
   </div>
 );

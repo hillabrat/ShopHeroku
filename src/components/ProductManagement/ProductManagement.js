@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./ProductManagement.css";
-import ProductForm from "./ProductForm/ProductForm";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
@@ -37,12 +36,16 @@ const ProductManagement = (props) => {
   let descriptionInput = useRef();
   let imageInput = useRef();
 
-  useEffect(() => {
+  const loadProducts = () => {
     axios.get("http://localhost:8000/products/").then((res) => {
       setProducts(res.data);
 
       clearFormData();
     });
+  };
+
+  useEffect(() => {
+    loadProducts();
   }, []);
 
   const useStyles = makeStyles((theme) => ({
@@ -61,12 +64,10 @@ const ProductManagement = (props) => {
       color: "rgba(255, 255, 255, 0.54)",
     },
   }));
-  //let imageInput = useRef();
+
   const addProduct = () => {
-    console.log("add data");
     const uploadedFile = imageInput.current;
     let file;
-    console.log("uploadedFile", uploadedFile);
     if (uploadedFile.files.length) file = uploadedFile.files[0].name;
     else file = "";
 
@@ -78,41 +79,16 @@ const ProductManagement = (props) => {
     if (file !== "")
       data.append("image", uploadedFile.files[0], uploadedFile.files[0].name);
 
-    // var requestOptions = {
-    //   method: "POST",
-    //   body: data,
-    //   redirect: "follow",
-    // };
-
     axios
       .post("http://localhost:8000/products/", data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
 
-    // axios
-    //   .post("http://localhost:8000/products", uploadedFile.files[0], {
-    //     params: {
-    //       filename: uploadedFile.files[0].name,
-    //       title: "test",
-    //       image: "",
-    //       quantity: 11,
-    //       price: 22,
-    //     },
-    //   })
-    //   .then(
-    //     (response) => {
-    //       console.log(response);
-    //     },
-    //     (error) => {
-    //       console.log(error);
-    //     }
-    //   );
+    loadProducts();
   };
 
   const updateProduct = () => {
-    console.log("update product");
     const uploadedFile = imageInput.current;
-    //let file = uploadedFile.files[0].name;
 
     let data = new FormData();
     data.append("title", product.title);
@@ -126,15 +102,11 @@ const ProductManagement = (props) => {
       .put(`http://localhost:8000/Products/${productId}`, data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
+
+    loadProducts();
   };
 
   const clearFormData = () => {
-    // titleInput = "";
-    // priceInput = 0;
-    // quantityInput = 0;
-    // descriptionInput = "";
-    // imageInput = "";
-
     setProduct({
       ...product,
       title: "",
