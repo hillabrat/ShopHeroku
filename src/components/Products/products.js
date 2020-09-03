@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Product from "../Product/product";
 import "../Products/products.css";
 import { Slider } from "antd";
-import SearchProduct from "../SearchProduct/SearchProduct";
 
 const Products = (props) => {
   const [products, setProducts] = useState([]);
@@ -21,10 +20,6 @@ const Products = (props) => {
     props.removeProductFromCart(pId);
   };
 
-  const searchForProduct = (searchStr) => {
-    props.searchForProduct(searchStr);
-  };
-
   useEffect(() => {
     setProducts(props.products);
     let min = Math.min(...props.products.map((o) => o.price));
@@ -39,10 +34,6 @@ const Products = (props) => {
 
   return (
     <div className="ShopContainer">
-      {/* <div className="Products"> */}
-      {/* <h2>
-        Products <SearchProduct searchForProduct={searchForProduct} />
-      </h2> */}
       price filter
       {priceRange[0] ? (
         <Slider

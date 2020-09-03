@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header/header";
@@ -12,20 +12,24 @@ import SearchProduct from "./components/SearchProduct/SearchProduct";
 import createPersistedState from "use-persisted-state";
 import LoginForm from "./components/LoginForm/LoginForm";
 import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
+import socketIOClient from "socket.io-client";
 
 const App = () => {
   const useCartState = createPersistedState("cart");
-
   const [searchStr, setSearchStr] = useState("");
   const [products, setProducts] = useState([]);
+  const productsRef = useRef(products);
+
   const [cart, setCart] = useCartState({
     products: [],
     totalProductsCount: 0,
     totalProductsAmount: 0,
   });
 
-  const [title, updateTitle] = useState("Hilla's Shop");
-  const [errorMessage, updateErrorMessage] = useState(null);
+  const [title, setTitle] = useState("Hilla's Shop");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [socket, setSocket] = useState(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const handleAddOneProduct = (pId) => {
     let shouldAddProduct = true;
@@ -128,16 +132,91 @@ const App = () => {
     setSearchStr(searchStr);
   };
 
+  const updateProductQuantity = (pId, newQuantity) => {
+    const prodInd = productsRef.current.findIndex((p) => p.id === pId);
+    let updatedProducts = JSON.parse(JSON.stringify(productsRef.current));
+    if (updatedProducts[prodInd].quantity > 0) {
+      updatedProducts[prodInd].quantity += newQuantity;
+      setProducts(updatedProducts);
+    }
+  };
+
+  // subscribe to socket update event
+  const subscribeToUpdateQuantityEvent = (interval = 1000) => {
+    socket.emit("getProductQuantityToUpdate", interval);
+  };
+
   useEffect(() => {
-    axios
-      .get(`http://localhost:8000/products?search=${searchStr}`)
-      .then((res) => {
-        for (let i = 0; i < res.data.length; i++) {
-          res.data[i].cartQuantity = 0;
-        }
-        setProducts(res.data);
-      });
-  }, [searchStr]);
+    async function fetchData() {
+      await axios
+        .get(`http://localhost:8000/products?search=${searchStr}`)
+        .then((res) => {
+          for (let i = 0; i < res.data.length; i++) {
+            res.data[i].cartQuantity = 0;
+          }
+          setProducts(res.data);
+        });
+    }
+    fetchData();
+  }, [products, searchStr]);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`http://localhost:8000/products?search=${searchStr}`)
+  //     .then((res) => {
+  //       console.log("products1", products);
+  //       for (let i = 0; i < res.data.length; i++) {
+  //         res.data[i].cartQuantity = 0;
+  //       }
+  //       setProducts(res.data);
+  //       productsRef.current = products;
+
+  //     });
+  // }, [searchStr]);
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
+
+  useEffect(() => {
+    setSocket(socketIOClient("http://localhost:8000"));
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("connect", () => {
+      setSocketConnected(socket.connected);
+      subscribeToUpdateQuantityEvent();
+    });
+    socket.on("disconnect", () => {
+      setSocketConnected(socket.connected);
+    });
+
+    socket.on("getProductQuantityToUpdate", (pId, pQuantity) => {
+      updateProductQuantity(pId, pQuantity);
+    });
+  }, [socket]);
+
+  const handleSocketConnection = () => {
+    if (socketConnected) socket.disconnect();
+    else {
+      socket.connect();
+    }
+  };
+
+  // useEffect(() => {
+  //   const socket = socketIOClient("http://localhost:8000");
+  //   socket.on("FromAPI", (pId, pQuantity) => {
+  //     console.log("products2", products);
+
+  //     console.log("pId", pId, "pQuantit", pQuantity);
+  //     setUpdateCount((updateCount) => updateCount + 1);
+  //     console.log("updateCount2", updateCountRef.current);
+  //     //updateProductQuantity(pId, pQuantity);
+  //     // setProductQuantity(data);
+  //     // setTimeout(() => setProductQuantity(""), 3000);
+  //   });
+  // }, []);
 
   return (
     <Router>
@@ -173,18 +252,23 @@ const App = () => {
           </Route>
           <Route path="/register">
             <RegistrationForm
-              showError={updateErrorMessage}
-              updateTitle={updateTitle}
+              showError={setErrorMessage}
+              updateTitle={setTitle}
             />
           </Route>
           <Route path="/login">
-            <LoginForm
-              showError={updateErrorMessage}
-              updateTitle={updateTitle}
-            />
+            <LoginForm showError={setErrorMessage} updateTitle={setTitle} />
           </Route>
         </Switch>
       </div>
+      {/* <div style={{ padding: "30px" }}>
+        {productQuantity && (
+          <div>
+            {productQuantity.title} qunatity has updated to
+            {productQuantity.quantity} items.
+          </div>
+        )}
+      </div> */}
     </Router>
   );
 };
