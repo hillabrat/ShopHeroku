@@ -136,7 +136,7 @@ const App = () => {
     const prodInd = productsRef.current.findIndex((p) => p.id === pId);
     let updatedProducts = JSON.parse(JSON.stringify(productsRef.current));
     if (updatedProducts[prodInd].quantity > 0) {
-      updatedProducts[prodInd].quantity += newQuantity;
+      updatedProducts[prodInd].quantity = newQuantity;
       setProducts(updatedProducts);
     }
   };
