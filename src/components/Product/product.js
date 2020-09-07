@@ -4,20 +4,20 @@ import "./product.css";
 
 const Product = (props) => {
   const removeFromCart = () => {
-    props.onRemoveCart(props.id);
+    props.onRemoveCart(props._id);
   };
 
   const addOneProduct = () => {
-    props.onAdd(props.id);
+    props.onAdd(props._id);
   };
 
   const removeOneProduct = () => {
-    props.onRemove(props.id);
+    props.onRemove(props._id);
   };
 
   return (
     <div className="product">
-      <Link to={"/products/" + props.id}>
+      <Link to={"/products/" + props._id}>
         <img
           src={`http://localhost:8000/${props.image}`}
           alt="loading..."

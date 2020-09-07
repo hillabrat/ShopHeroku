@@ -19,6 +19,7 @@ import { TextareaAutosize, TextField } from "@material-ui/core";
 
 const ProductManagement = (props) => {
   const [products, setProducts] = useState([]);
+  const productsRef = useRef(products);
   const [productId, setProductId] = useState();
   const [product, setProduct] = useState(0);
   const [editMode, setEditMode] = useState(false);
@@ -26,7 +27,6 @@ const ProductManagement = (props) => {
   const [previewImg, setPreviewImg] = useState(
     "http://localhost:8000/images/NoImage.png"
   );
-  //const [selectedProductId, setSelectedProductId] = useState();
 
   const formData = require("form-data");
 
@@ -36,17 +36,20 @@ const ProductManagement = (props) => {
   let descriptionInput = useRef();
   let imageInput = useRef();
 
-  const loadProducts = () => {
-    axios.get("http://localhost:8000/products/").then((res) => {
-      setProducts(res.data);
-
-      clearFormData();
-    });
-  };
-
   useEffect(() => {
     loadProducts();
   }, []);
+
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
+
+  const loadProducts = async () => {
+    await axios.get("http://localhost:8000/products?search=").then((res) => {
+      setProducts(res.data);
+      clearFormData();
+    });
+  };
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -119,16 +122,16 @@ const ProductManagement = (props) => {
   };
 
   const handleProductClick = (e) => {
-    console.log("handleProductClick=", e.target.id);
     showSelectedProduct(e.target.id, false, false);
   };
 
   const showSelectedProduct = (pId, isEditMode) => {
-    console.log("showSelectedProduct=", pId);
     setProductId(pId);
-    setProduct(products.filter((p) => p.id === +pId)[0]);
+    setProduct(productsRef.current.filter((p) => p._id === +pId)[0]);
     setPreviewImg(
-      `http://localhost:8000/${products.filter((p) => p.id === +pId)[0].image}`
+      `http://localhost:8000/${
+        productsRef.current.filter((p) => p._id === +pId)[0].image
+      }`
     );
     setAddMode(false);
     setEditMode(isEditMode);
@@ -148,10 +151,11 @@ const ProductManagement = (props) => {
       .delete(`http://localhost:8000/products/${pId}`)
       .then((res) => console.log(res.data));
 
-    setProducts(products.filter((p) => p.id !== pId));
+    setProducts(productsRef.current.filter((p) => p._id !== pId));
   };
 
   const handleEditProduct = (pId) => {
+    console.log("handleEditProduct = ", pId);
     showSelectedProduct(pId, true);
   };
 
@@ -311,14 +315,14 @@ const ProductManagement = (props) => {
               />
             </GridListTile>
             {products
-              .filter((p) => p.id !== 0)
+              .filter((p) => p._id !== 0)
               .map((p, index) => (
-                <GridListTile className="productTile" key={p.id}>
+                <GridListTile className="productTile" key={p._id}>
                   <img
                     src={`http://localhost:8000/${p.image}`}
                     alt={p.title}
                     onClick={handleProductClick}
-                    id={p.id}
+                    id={p._id}
                   />
                   <GridListTileBar
                     title={p.title}
@@ -332,8 +336,10 @@ const ProductManagement = (props) => {
                         aria-label={`info about ${p.title}`}
                         className={classes.icon}
                       >
-                        <EditIcon onClick={() => handleEditProduct(p.id)} />
-                        <DeleteIcon onClick={() => handleProductDelete(p.id)} />
+                        <EditIcon onClick={() => handleEditProduct(p._id)} />
+                        <DeleteIcon
+                          onClick={() => handleProductDelete(p._id)}
+                        />
                       </IconButton>
                     }
                   />

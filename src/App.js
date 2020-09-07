@@ -33,7 +33,7 @@ const App = () => {
 
   const handleAddOneProduct = (pId) => {
     let shouldAddProduct = true;
-    const prodInd = products.findIndex((p) => p.id === pId);
+    const prodInd = products.findIndex((p) => p._id === pId);
     let updatedProducts = JSON.parse(JSON.stringify(products));
     if (updatedProducts[prodInd].quantity > 0) {
       updatedProducts[prodInd].quantity -= 1;
@@ -46,7 +46,7 @@ const App = () => {
 
     if (!shouldAddProduct) return;
 
-    const cartInd = cart.products.findIndex((p) => p.id === pId);
+    const cartInd = cart.products.findIndex((p) => p._id === pId);
     if (cartInd === -1) {
       let productToAdd = JSON.parse(JSON.stringify(products[prodInd]));
       productToAdd.quantity = 1;
@@ -69,7 +69,7 @@ const App = () => {
   };
 
   const handleRemoveOneProduct = (pId) => {
-    const cartInd = cart.products.findIndex((p) => p.id === pId);
+    const cartInd = cart.products.findIndex((p) => p._id === pId);
     let updatedCartProducts = cart.products;
     if (cartInd !== -1) {
       updatedCartProducts[cartInd].quantity -= 1;
@@ -78,7 +78,7 @@ const App = () => {
         setCart({
           products: [
             ...cart.products.filter(
-              (productInCart) => pId !== productInCart.id
+              (productInCart) => pId !== productInCart._id
             ),
           ],
           totalProductsCount: cart.totalProductsCount - 1,
@@ -93,7 +93,7 @@ const App = () => {
             cart.totalProductsAmount - updatedCartProducts[cartInd].price,
         });
 
-      const prodInd = products.findIndex((p) => p.id === pId);
+      const prodInd = products.findIndex((p) => p._id === pId);
       let updatedProducts = JSON.parse(JSON.stringify(products));
 
       if (updatedProducts[prodInd].cartQuantity > 0) {
@@ -106,21 +106,21 @@ const App = () => {
 
   const handleRemoveProductFromCart = (pId) => {
     let cartProd = cart.products.filter(
-      (productInCart) => pId === productInCart.id
+      (productInCart) => pId === productInCart._id
     )[0];
 
     let countToDecrease = cartProd.quantity;
 
     setCart({
       products: [
-        ...cart.products.filter((productInCart) => pId !== productInCart.id),
+        ...cart.products.filter((productInCart) => pId !== productInCart._id),
       ],
       totalProductsCount: cart.totalProductsCount - countToDecrease,
       totalProductsAmount:
         cart.totalProductsAmount - cartProd.price * countToDecrease,
     });
 
-    const prodInd = products.findIndex((p) => p.id === pId);
+    const prodInd = products.findIndex((p) => p._id === pId);
     let updatedProducts = products;
 
     updatedProducts[prodInd].quantity += countToDecrease;
@@ -133,12 +133,12 @@ const App = () => {
   };
 
   const updateProductQuantity = (pId, newQuantity) => {
-    const prodInd = productsRef.current.findIndex((p) => p.id === pId);
+    const prodInd = productsRef.current.findIndex((p) => p._id === +pId);
     let updatedProducts = JSON.parse(JSON.stringify(productsRef.current));
-    if (updatedProducts[prodInd].quantity > 0) {
-      updatedProducts[prodInd].quantity = newQuantity;
-      setProducts(updatedProducts);
-    }
+
+    updatedProducts[prodInd].quantity = newQuantity;
+
+    setProducts(updatedProducts);
   };
 
   // subscribe to socket update event
@@ -147,6 +147,8 @@ const App = () => {
   };
 
   useEffect(() => {
+    console.log("useEffect", products);
+    console.log("useEffect", searchStr);
     async function fetchData() {
       await axios
         .get(`http://localhost:8000/products?search=${searchStr}`)
@@ -158,23 +160,12 @@ const App = () => {
         });
     }
     fetchData();
-  }, [products, searchStr]);
+  }, [searchStr]);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:8000/products?search=${searchStr}`)
-  //     .then((res) => {
-  //       console.log("products1", products);
-  //       for (let i = 0; i < res.data.length; i++) {
-  //         res.data[i].cartQuantity = 0;
-  //       }
-  //       setProducts(res.data);
-  //       productsRef.current = products;
-
-  //     });
-  // }, [searchStr]);
   useEffect(() => {
+    console.log("!!!");
     productsRef.current = products;
+    console.log("productsRef.current", productsRef.current);
   }, [products]);
 
   useEffect(() => {
@@ -203,20 +194,6 @@ const App = () => {
       socket.connect();
     }
   };
-
-  // useEffect(() => {
-  //   const socket = socketIOClient("http://localhost:8000");
-  //   socket.on("FromAPI", (pId, pQuantity) => {
-  //     console.log("products2", products);
-
-  //     console.log("pId", pId, "pQuantit", pQuantity);
-  //     setUpdateCount((updateCount) => updateCount + 1);
-  //     console.log("updateCount2", updateCountRef.current);
-  //     //updateProductQuantity(pId, pQuantity);
-  //     // setProductQuantity(data);
-  //     // setTimeout(() => setProductQuantity(""), 3000);
-  //   });
-  // }, []);
 
   return (
     <Router>

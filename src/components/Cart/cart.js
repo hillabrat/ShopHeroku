@@ -13,8 +13,8 @@ const Cart = (props) => {
       {props.cart.products.map((p, index) => (
         <div key={index}>
           <Product
-            key={p.id}
-            id={p.id}
+            key={p._id}
+            _id={p._id}
             title={p.title}
             image={p.image}
             quantity={p.quantity}

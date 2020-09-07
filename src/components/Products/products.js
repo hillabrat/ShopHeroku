@@ -55,8 +55,8 @@ const Products = (props) => {
         })
         .map((p, index) => (
           <Product
-            key={p.id}
-            id={p.id}
+            key={p._id}
+            _id={p._id}
             title={p.title}
             image={p.image}
             cartQuantity={p.cartQuantity} // ? p.cartQuantity : 0}
