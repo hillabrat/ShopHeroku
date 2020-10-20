@@ -33,7 +33,7 @@ app.use(express.json());
 
 app.use(cors());
 
-app.use(`/${imageDir}`, express.static(imageDir));
+app.use(`/${imageDir}`, express.static(path.join(__dirname, imageDir)));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -285,8 +285,10 @@ app.get("/products/cartTest/:id", async (req, res) => {
   res.send(order1);
 });
 
+const port = process.env.PORT || 8000;
+
 connectToDB().then(async () => {
-  server.listen(8000, () => {
+  server.listen(port, () => {
     console.log(`Example app listening on port 8000!`);
   });
 });
