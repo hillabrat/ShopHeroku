@@ -9,7 +9,7 @@ function connectToDB() {
 }
 
 connectToDB().then(async () => {
-  console.log("connected!");
+  console.log("connected");
 
   const kittySchema = new mongoose.Schema({
     _id: String,
