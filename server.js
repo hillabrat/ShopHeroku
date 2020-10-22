@@ -35,7 +35,7 @@ app.use(cors());
 
 app.use(`/${imageDir}`, express.static(path.join(__dirname, imageDir)));
 
-app.use(express.static(path.join(__dirname, "client")));
+app.use("/", express.static(path.join(__dirname, "client/build")));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -291,6 +291,6 @@ const port = process.env.PORT || 8000;
 
 connectToDB().then(async () => {
   server.listen(port, () => {
-    console.log(`Example app listening on port 8000!`);
+    console.log(`Example app listening on port ${port}!`);
   });
 });
