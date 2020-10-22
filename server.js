@@ -35,7 +35,7 @@ app.use(cors());
 
 app.use(`/${imageDir}`, express.static(path.join(__dirname, imageDir)));
 
-app.use("/", express.static("client"));
+app.use(express.static(path.join(__dirname, express.static("client"))));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -78,7 +78,7 @@ app.post("/Login", (req, res) => {
   }
 });
 
-app.get("/products", (req, res) => {
+app.get("/api/products", (req, res) => {
   //const prods = mongoose.model("products", productsSchema);
   const search = req.query.search;
   let productList;
@@ -94,7 +94,7 @@ app.get("/products", (req, res) => {
 });
 
 //get product by id
-app.get("/products/:id", (req, res) => {
+app.get("/api/products/:id", (req, res) => {
   const productId = +req.params.id;
   //const prods = mongoose.model("products", productsSchema);
   let productInfo;
@@ -106,7 +106,7 @@ app.get("/products/:id", (req, res) => {
 });
 
 // add new product + upload image
-app.post("/products", (req, res) => {
+app.post("/api/products", (req, res) => {
   var dir = imageDir;
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
@@ -150,7 +150,7 @@ app.post("/products", (req, res) => {
 });
 
 //delete product by id + delete server image
-app.delete("/products/:id", (req, res) => {
+app.delete("/api/products/:id", (req, res) => {
   const productId = +req.params.id;
 
   console.log("delete by id", productId);
@@ -182,7 +182,7 @@ app.delete("/products/:id", (req, res) => {
 });
 
 //update product quantity
-app.put("/products/updateQuantity/:id", (req, res) => {
+app.put("/api/products/updateQuantity/:id", (req, res) => {
   const productId = +req.params.id;
   //const prods = mongoose.model("products", productsSchema);
   let productInfo;
@@ -209,7 +209,7 @@ app.put("/products/updateQuantity/:id", (req, res) => {
 });
 
 //update product info
-app.put("/products/:id", (req, res) => {
+app.put("/api/products/:id", (req, res) => {
   const productId = +req.params.id;
   //const prods = mongoose.model("products", productsSchema);
   let productInfo;
@@ -262,7 +262,7 @@ app.put("/products/:id", (req, res) => {
 });
 
 //get product by id
-app.get("/products/cartTest/:id", async (req, res) => {
+app.get("/api/products/cartTest/:id", async (req, res) => {
   //const prods = mongoose.model("products", productsSchema);
   console.log("cartTest----------------");
 

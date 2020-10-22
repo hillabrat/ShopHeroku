@@ -81,7 +81,7 @@ const ProductManagement = (props) => {
       data.append("image", uploadedFile.files[0], uploadedFile.files[0].name);
 
     axios
-      .post("/products/", data)
+      .post("/api/products/", data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
 
@@ -100,7 +100,7 @@ const ProductManagement = (props) => {
       data.append("image", uploadedFile.files[0], uploadedFile.files[0].name);
 
     axios
-      .put(`/Products/${productId}`, data)
+      .put(`/api/Products/${productId}`, data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
 
@@ -143,7 +143,7 @@ const ProductManagement = (props) => {
     setAddMode(false);
     setEditMode(false);
     console.log("deleting product id = ", pId);
-    axios.delete(`/products/${pId}`).then((res) => console.log(res.data));
+    axios.delete(`/api/products/${pId}`).then((res) => console.log(res.data));
 
     setProducts(productsRef.current.filter((p) => p._id !== pId));
   };
