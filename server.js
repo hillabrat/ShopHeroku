@@ -112,7 +112,7 @@ app.post("/products", (req, res) => {
 
   upload(req, res, (err) => {
     if (err) {
-      res.status(400).send("Something went wrong!");
+      res.status(400).send("Something went wrong");
     }
 
     let imgFileName;
