@@ -18,10 +18,7 @@ const Product = (props) => {
   return (
     <div className="product">
       <Link to={"/products/" + props._id}>
-        <img
-          src={`http://localhost:8000/${props.image}`}
-          alt="loading..."
-        ></img>
+        <img src={`/${props.image}`} alt="loading..."></img>
       </Link>
       <h3>{props.title}</h3>
       <div>price {props.price} ils</div>

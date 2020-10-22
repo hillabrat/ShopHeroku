@@ -150,14 +150,12 @@ const App = () => {
     console.log("useEffect", products);
     console.log("useEffect", searchStr);
     async function fetchData() {
-      await axios
-        .get(`http://localhost:8000/products?search=${searchStr}`)
-        .then((res) => {
-          for (let i = 0; i < res.data.length; i++) {
-            res.data[i].cartQuantity = 0;
-          }
-          setProducts(res.data);
-        });
+      await axios.get(`/products?search=${searchStr}`).then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].cartQuantity = 0;
+        }
+        setProducts(res.data);
+      });
     }
     fetchData();
   }, [searchStr]);
@@ -169,7 +167,7 @@ const App = () => {
   }, [products]);
 
   useEffect(() => {
-    setSocket(socketIOClient("http://localhost:8000"));
+    setSocket(socketIOClient(""));
   }, []);
 
   useEffect(() => {

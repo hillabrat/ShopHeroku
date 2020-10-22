@@ -24,9 +24,7 @@ const ProductManagement = (props) => {
   const [product, setProduct] = useState(0);
   const [editMode, setEditMode] = useState(false);
   const [addMode, setAddMode] = useState(false);
-  const [previewImg, setPreviewImg] = useState(
-    "http://localhost:8000/images/NoImage.png"
-  );
+  const [previewImg, setPreviewImg] = useState("/images/NoImage.png");
 
   const formData = require("form-data");
 
@@ -45,7 +43,7 @@ const ProductManagement = (props) => {
   }, [products]);
 
   const loadProducts = async () => {
-    await axios.get("http://localhost:8000/products?search=").then((res) => {
+    await axios.get("/products?search=").then((res) => {
       setProducts(res.data);
       clearFormData();
     });
@@ -83,7 +81,7 @@ const ProductManagement = (props) => {
       data.append("image", uploadedFile.files[0], uploadedFile.files[0].name);
 
     axios
-      .post("http://localhost:8000/products/", data)
+      .post("/products/", data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
 
@@ -102,7 +100,7 @@ const ProductManagement = (props) => {
       data.append("image", uploadedFile.files[0], uploadedFile.files[0].name);
 
     axios
-      .put(`http://localhost:8000/Products/${productId}`, data)
+      .put(`/Products/${productId}`, data)
       .then((response) => console.log(response))
       .catch((error) => console.log("error", error));
 
@@ -118,7 +116,7 @@ const ProductManagement = (props) => {
       description: "",
     });
 
-    setPreviewImg("http://localhost:8000/images/NoImage.png");
+    setPreviewImg("/images/NoImage.png");
   };
 
   const handleProductClick = (e) => {
@@ -129,9 +127,7 @@ const ProductManagement = (props) => {
     setProductId(pId);
     setProduct(productsRef.current.filter((p) => p._id === +pId)[0]);
     setPreviewImg(
-      `http://localhost:8000/${
-        productsRef.current.filter((p) => p._id === +pId)[0].image
-      }`
+      `/${productsRef.current.filter((p) => p._id === +pId)[0].image}`
     );
     setAddMode(false);
     setEditMode(isEditMode);
@@ -147,9 +143,7 @@ const ProductManagement = (props) => {
     setAddMode(false);
     setEditMode(false);
     console.log("deleting product id = ", pId);
-    axios
-      .delete(`http://localhost:8000/products/${pId}`)
-      .then((res) => console.log(res.data));
+    axios.delete(`/products/${pId}`).then((res) => console.log(res.data));
 
     setProducts(productsRef.current.filter((p) => p._id !== pId));
   };
@@ -279,7 +273,7 @@ const ProductManagement = (props) => {
                   previewImg
                   // addMode
                   //   ? previewImg
-                  //   : `http://localhost:8000/${product.image}`
+                  //   : `/${product.image}`
                 }
                 alt="Loading..."
               ></img>
@@ -319,7 +313,7 @@ const ProductManagement = (props) => {
               .map((p, index) => (
                 <GridListTile className="productTile" key={p._id}>
                   <img
-                    src={`http://localhost:8000/${p.image}`}
+                    src={`/${p.image}`}
                     alt={p.title}
                     onClick={handleProductClick}
                     id={p._id}

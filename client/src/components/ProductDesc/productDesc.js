@@ -7,7 +7,7 @@ const ProductDesc = (props) => {
   const [productData, setProductData] = useState([]);
   const { idParam } = useParams();
   useEffect(() => {
-    axios.get(`http://localhost:8000/products/${idParam}`).then((res) => {
+    axios.get(`/products/${idParam}`).then((res) => {
       setProductData(res.data);
     });
   }, [idParam]);
