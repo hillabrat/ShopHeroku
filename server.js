@@ -53,7 +53,7 @@ const upload = multer({
 }).single("image");
 
 function connectToDB() {
-  return mongoose.connect("mongodb://localhost/shopDB", {
+  return mongoose.connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
