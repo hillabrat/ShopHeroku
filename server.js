@@ -35,6 +35,8 @@ app.use(cors());
 
 app.use(`/${imageDir}`, express.static(path.join(__dirname, imageDir)));
 
+app.use("/", express.static("client"));
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, `${imageDir}/`);
