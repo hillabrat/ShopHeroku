@@ -1,14 +1,11 @@
 const mongoose = require("mongoose");
 
 function connectToDB() {
-  return mongoose.connect(
-    "mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@shopcluster.hrv94.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useCreateIndex: true,
-      useUnifiedTopology: true,
-    }
-  );
+  return mongoose.connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+  });
 }
 
 connectToDB().then(async () => {
