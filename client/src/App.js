@@ -150,7 +150,7 @@ const App = () => {
     console.log("useEffect", products);
     console.log("useEffect", searchStr);
     async function fetchData() {
-      await axios.get(`/products?search=${searchStr}`).then((res) => {
+      await axios.get(`/api/products?search=${searchStr}`).then((res) => {
         for (let i = 0; i < res.data.length; i++) {
           res.data[i].cartQuantity = 0;
         }
