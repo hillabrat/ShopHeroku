@@ -43,7 +43,7 @@ const ProductManagement = (props) => {
   }, [products]);
 
   const loadProducts = async () => {
-    await axios.get("/products?search=").then((res) => {
+    await axios.get("/api/products?search=").then((res) => {
       setProducts(res.data);
       clearFormData();
     });
